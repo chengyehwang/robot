@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+"""https://github.com/gnea/grbl/blob/v1.1h.20190825/doc/script/stream.py"""
 import serial
 import re
 import time
@@ -31,7 +31,7 @@ s.write(bytes("\r\n\r\n",'ascii'))
 # Wait for grbl to initialize and flush startup text in serial input
 time.sleep(2)
 s.flushInput()
-end_time = time.time();
+start_time = time.time();
 c_count = 0
 error_count = 0
 if True:
