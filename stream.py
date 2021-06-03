@@ -195,7 +195,7 @@ if check_mode :
         print ("CHECK PASSED: No errors found in g-code program.\n")
 else :
    print ("WARNING: Wait until Grbl completes buffered g-code blocks before exiting.")
-   raw_input("  Press <Enter> to exit and disable Grbl.") 
+   input("  Press <Enter> to exit and disable Grbl.")
 
 # Close file and serial port
 f.close()
