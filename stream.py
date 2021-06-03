@@ -162,7 +162,7 @@ else:
         c_line.append(len(l_block)+1) # Track number of characters in grbl serial read buffer
         grbl_out = '' 
         while sum(c_line) >= RX_BUFFER_SIZE-1 | s.inWaiting() :
-            out_temp = str(s.readline().strip()) # Wait for grbl response
+            out_temp = s.readline().strip().decode('ascii') # Wait for grbl response
             if out_temp.find('ok') < 0 and out_temp.find('error') < 0 :
                 print ("    MSG: \""+out_temp+"\"") # Debug response
             else :
@@ -174,8 +174,8 @@ else:
         if verbose: print ("SND>"+str(l_count)+": \"" + l_block + "\"")
     # Wait until all responses have been received.
     while l_count > g_count :
-        out_temp = str(s.readline().strip()) # Wait for grbl response
-        if out_temp.find('ascii') < 0 and out_temp.find('error') < 0 :
+        out_temp = s.readline().strip().decode('ascii') # Wait for grbl response
+        if out_temp.find('ok') < 0 and out_temp.find('error') < 0 :
             print ("    MSG: \""+out_temp+"\"") # Debug response
         else :
             if out_temp.find('error') >= 0 : error_count += 1
