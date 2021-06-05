@@ -12,9 +12,9 @@ def detectShape(c):          #Function to determine type of polygon on basis of 
        return vertices
 print("""
 $x
+$h
 G92 X0Y0Z0
-G90
-G01 Z27F1000
+G01 X50Y-200F10000
 G92 X0Y0Z0
 G90
 """)
@@ -23,7 +23,7 @@ for cnt in contours:
     for i in range(len(shape)):
         print("G01 X%dY%dF1000"%(shape[i][0][0]/4,shape[i][0][1]/4))
         if i ==0:
-            print("G01 Z-27F1000")
+            print("G01 Z-23F1000")
     print("G01 X%dY%dF1000"%(shape[0][0][0]/4,shape[0][0][1]/4))
     print("G01 Z0F1000")
     print("\n")        
