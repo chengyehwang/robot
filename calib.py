@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import simplejson as json
+
 from gcode import *
 from control import *
 
@@ -46,15 +48,25 @@ def get_input():
     return (x,y)
 
 init()
-data = {}
+data = []
 for y in range(0, 100, 20):
     for x in range(0, 50, 10):
         click(x+3,y+3)
         click(x,y)
-        pos = get_input()
-        print(pos)
-        data[(x,y)] = pos
+        pos_x, pos_y = get_input()
+        print(pos_x, pos_y)
+        data.append({'x': x, 'y': y, 'pos_x': pos_x, 'pos_y': pos_y})
 
 print(data)
 end()
+
+with open('calib.json', 'w') as fp:
+    json.dump(data, fp)
+
+
+import plotly.express as px
+import pandas as pd
+data = pd.read_json('calib.json')
+fig = px.scatter(data, x='pos_x', y='pos_y')
+fig.write_image('calib.png')
 
