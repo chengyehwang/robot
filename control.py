@@ -2,6 +2,7 @@
 import os
 import re
 import pandas as pd
+import json
 from plot import plot
 from subprocess import PIPE, Popen
 
@@ -93,7 +94,9 @@ def fps_plot():
                 if n:
                     ms = int(n.group(1))
                     num = int(n.group(2))
-                    data.append({'ms':x, 'num':y})
+                    data.append({'ms':ms, 'num':num})
+    with open('gfxinfo.json', 'w') as fp:
+        json.dump(data, fp)
     data = pd.DataFrame(data)
     print('ultra long frame', data[(data['ms'] > 120) & (data['num'] > 0)])
     data = data[data['ms']<=120]
@@ -112,7 +115,7 @@ if __name__ == '__main__':
         adb_dut('chmod 755 /data/local/tmp/scroll.sh')
         adb_dut('dos2unix /data/local/tmp/scroll.sh')
         adb_dut('nohup /data/local/tmp/scroll.sh >/dev/null 2>/dev/null &')
-    if False:
+    if True:
         fps_begin()
         with open("scroll_test.gcode", "w") as fp:
             fp.write("$x\n$h\nG92 X0Y0Z0\nG90\n")
@@ -121,5 +124,4 @@ if __name__ == '__main__':
 
         os.system('python3 gcode.py --gcode_file scroll_test.gcode')
         fps_end()
-
-    fps_plot()
+        fps_plot()
