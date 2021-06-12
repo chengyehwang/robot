@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 import re
+import pandas as pd
+from plot import plot
 from subprocess import PIPE, Popen
 
 device_dut = None
@@ -77,6 +79,25 @@ def fps_end():
     out = adb_dut('dumpsys gfxinfo %s'%package)
     with open('gfxinfo','w') as fp:
         fp.write('\n'.join(out))
+def fps_plot():
+    with open('gfxinfo') as fp:
+        out = fp.readlines()
+
+    data = []
+    for line in out:
+        m = re.search('HISTOGRAM: (.*)',line)
+        if m:
+            items = m.group(1).split(' ')
+            for item in items:
+                n = re.search('(\d+)ms=(\d+)',item)
+                if n:
+                    ms = int(n.group(1))
+                    num = int(n.group(2))
+                    data.append({'ms':x, 'num':y})
+    data = pd.DataFrame(data)
+    print('ultra long frame', data[(data['ms'] > 120) & (data['num'] > 0)])
+    data = data[data['ms']<=120]
+    plot(data,'ms','num','fps.png')
 
 if __name__ == '__main__':
 
@@ -91,13 +112,14 @@ if __name__ == '__main__':
         adb_dut('chmod 755 /data/local/tmp/scroll.sh')
         adb_dut('dos2unix /data/local/tmp/scroll.sh')
         adb_dut('nohup /data/local/tmp/scroll.sh >/dev/null 2>/dev/null &')
-    fps_begin()
-    if True:
+    if False:
+        fps_begin()
         with open("scroll_test.gcode", "w") as fp:
             fp.write("$x\n$h\nG92 X0Y0Z0\nG90\n")
             for i in range(20):
                 fp.write("G01 X50Y-120F10000\nG01 Z-20F1000\nG01 X50Y-30F12000\nG01 Z0F4000\n")
 
         os.system('python3 gcode.py --gcode_file scroll_test.gcode')
-    fps_end()
+        fps_end()
 
+    fps_plot()
