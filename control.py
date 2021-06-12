@@ -78,32 +78,26 @@ def fps_end():
     with open('gfxinfo','w') as fp:
         fp.write('\n'.join(out))
 
-#adb_mon('input keyevent POWER')
-#adb_mon('input keyevent WAKEUP')
-#adb_mon('input keyevent FOCUS')
-#adb_mon('input keyevent KEYCODE_CAMERA')
-#adb_mon('input swipe 300 1000 300 100')
-#print(adb_mon('am start -a android.media.action.IMAGE_CAPTURE --ei android.intent.extras.CAMERA_FACING 0'))
-if False:
-    adb_cmd('push scroll.sh /data/local/tmp', dut=True)
-    adb_dut('chmod 755 /data/local/tmp/scroll.sh')
-    adb_dut('dos2unix /data/local/tmp/scroll.sh')
-    adb_dut('nohup /data/local/tmp/scroll.sh >/dev/null 2>/dev/null &')
-fps_begin()
-if True:
-    with open("scroll_test.gcode", "w") as fp:
-        fp.write("""$x
-$h
-G92 X0Y0Z0
-G90
-""")
-        for i in range(20):
-            fp.write("""
-G01 X50Y-120F10000
-G01 Z-20F1000
-G01 X50Y-30F12000
-G01 Z0F4000
-""")
+if __name__ == '__main__':
 
-    os.system('python3 gcode.py --gcode_file scroll_test.gcode')
-fps_end()
+    #adb_mon('input keyevent POWER')
+    #adb_mon('input keyevent WAKEUP')
+    #adb_mon('input keyevent FOCUS')
+    #adb_mon('input keyevent KEYCODE_CAMERA')
+    #adb_mon('input swipe 300 1000 300 100')
+    #print(adb_mon('am start -a android.media.action.IMAGE_CAPTURE --ei android.intent.extras.CAMERA_FACING 0'))
+    if False:
+        adb_cmd('push scroll.sh /data/local/tmp', dut=True)
+        adb_dut('chmod 755 /data/local/tmp/scroll.sh')
+        adb_dut('dos2unix /data/local/tmp/scroll.sh')
+        adb_dut('nohup /data/local/tmp/scroll.sh >/dev/null 2>/dev/null &')
+    fps_begin()
+    if True:
+        with open("scroll_test.gcode", "w") as fp:
+            fp.write("$x\n$h\nG92 X0Y0Z0\nG90\n")
+            for i in range(20):
+                fp.write("G01 X50Y-120F10000\nG01 Z-20F1000\nG01 X50Y-30F12000\nG01 Z0F4000\n")
+
+        os.system('python3 gcode.py --gcode_file scroll_test.gcode')
+    fps_end()
+
