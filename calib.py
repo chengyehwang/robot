@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from gcode import *
+from control import *
 
 def init():
     gcode_begin()
@@ -27,9 +28,33 @@ def click(x,y):
 def end():    
     gcode_end()
 
+def get_input():
+    x = 0
+    y = 0
+    lines = adb_dut('timeout 2 getevent')
+    print('\n'.join(lines))
+    for line in lines:
+        if '0035' in line:
+            e = line.split(" ")
+            x = e[3]
+            x = int(x, 16)
+        if '0036' in line:
+            e = line.split(" ")
+            y = e[3]
+            y = int(y, 16)
+
+    return (x,y)
+
 init()
-for y in range(0, 100, 5):
-    for x in range(0, 50, 5):
+data = {}
+for y in range(0, 100, 20):
+    for x in range(0, 50, 10):
+        click(x+3,y+3)
         click(x,y)
+        pos = get_input()
+        print(pos)
+        data[(x,y)] = pos
+
+print(data)
 end()
 
