@@ -6,6 +6,8 @@ import json
 from plot import plot
 from subprocess import PIPE, Popen
 
+import arm
+
 device_dut = None
 device_mon = None
 
@@ -120,7 +122,7 @@ if __name__ == '__main__':
         with open("scroll_test.gcode", "w") as fp:
             fp.write("$x\n$h\nG92 X0Y0Z0\nG90\n")
             for i in range(20):
-                fp.write("G01 X50Y-120F10000\nG01 Z-20F1000\nG01 X50Y-30F12000\nG01 Z0F4000\n")
+                fp.write("G01 X230Y-120F10000\nG01 Z-20F1000\nG01 X230Y-30F12000\nG01 Z0F4000\n")
 
         os.system('python3 gcode.py --gcode_file scroll_test.gcode')
         fps_end()
