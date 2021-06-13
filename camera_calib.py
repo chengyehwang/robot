@@ -2,13 +2,14 @@
 import numpy as np
 import cv2 as cv
 import glob
+import simplejson as json
 
 from control import *
 from arm import *
 import os
 
-width = 7
-height = 5
+width = 9
+height = 15
 
 def calib_do():
     image_file = 'board_%d_%d.jpg'%(width, height)
@@ -23,8 +24,8 @@ def calib_post():
     # termination criteria
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-    objp = np.zeros((height*width,3), np.float32)
-    objp[:,:2] = np.mgrid[0:height,0:width].T.reshape(-1,2)
+    objp = np.zeros(((height-1)*(width-1),3), np.float32)
+    objp[:,:2] = np.mgrid[0:height-1,0:width-1].T.reshape(-1,2)
     # Arrays to store object points and image points from all the images.
     objpoints = [] # 3d point in real world space
     imgpoints = [] # 2d points in image plane.
@@ -32,9 +33,7 @@ def calib_post():
     for fname in images:
         img = cv.imread(fname)
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-        (thresh, gg) = cv2.threshold(gray, 127, 255, cv.THRESH_BINARY)
         cv.imshow('gray', gray)
-        cv.imshow('gg', gg)
         # Find the chess board corners
         ret, corners = cv.findChessboardCorners(gray, (height-1,width-1), None )
         # If found, add object points, image points (after refining them)
@@ -46,23 +45,21 @@ def calib_post():
             # Draw and display the corners
             cv.drawChessboardCorners(img, (height-1,width-1), corners2, ret)
             cv.imshow('img', img)
-            cv.waitKey(500)
-    cv.waitKey(5000)
+    cv.waitKey()
     cv.destroyAllWindows()
-
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
+    print(mtx,dist)
+    with open('calib.json', 'w') as fp:
+        fp.write(json.dumps({'mtx':mtx.tolist(),'dist':dist.tolist()},indent=4))
 
 def comp():
     # undistort
     dst = cv.undistort(img, mtx, dist, None, newcameramtx)
     # crop the image
-    x, y, w, h = roi
-    dst = dst[y:y+h, x:x+w]
     cv.imwrite('calibresult.png', dst)
 
 
 if __name__ == "__main__":
-    width = 9
-    height = 15
     #calib_do()
     calib_post()
 

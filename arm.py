@@ -10,7 +10,7 @@ def screen(file_name):
     image = cv2.VideoCapture(0)
     ret, frame = image.read()
     value = bgr8_to_jpeg(frame)
-    with open('%s.jpg'%file_name, 'wb') as fp:
+    with open(file_name, 'wb') as fp:
         fp.write(value)
 
 def video(file_name):
