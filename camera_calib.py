@@ -57,7 +57,7 @@ def comp(img=[]):
         calib = json.load(fp)
     mtx = np.matrix(calib['mtx'])
     dist = np.matrix(calib['dist'])
-    print('mtx', mtx, 'dist', dist)
+    #print('mtx', mtx, 'dist', dist)
     # undistort
     dst = cv.undistort(img, mtx, dist, None, None)
     # crop the image
