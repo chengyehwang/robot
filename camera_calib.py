@@ -7,8 +7,11 @@ from control import *
 from arm import *
 import os
 
+width = 7
+height = 5
+
 def calib_do():
-    os.system('./gen_pattern.py -c 7 -r 5 -T checkerboard -o checkerboard.jpg')
+    os.system('./gen_pattern.py -c %d -r %d -T checkerboard -o checkerboard.jpg'%(width, height))
     adb_dut('rm /storage/emulated/0/Download/checkerboard.jpg')
     adb_cmd('push checkerboard.jpg /storage/emulated/0/Download/')
     adb_dut('am start -a android.intent.action.VIEW -d file:///storage/emulated/0/Download/checkerboard.jpg -t image/jpeg')
@@ -18,8 +21,8 @@ def calib_post():
     # termination criteria
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-    objp = np.zeros((6*7,3), np.float32)
-    objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2)
+    objp = np.zeros((height*width,3), np.float32)
+    objp[:,:2] = np.mgrid[0:height,0:width].T.reshape(-1,2)
     # Arrays to store object points and image points from all the images.
     objpoints = [] # 3d point in real world space
     imgpoints = [] # 2d points in image plane.
@@ -31,7 +34,7 @@ def calib_post():
         cv.imshow('gray', gray)
         cv.imshow('gg', gg)
         # Find the chess board corners
-        ret, corners = cv.findChessboardCorners(gray, (4,6), None )
+        ret, corners = cv.findChessboardCorners(gray, (height-1,width-1), None )
         # If found, add object points, image points (after refining them)
         if ret == True:
             print('chessboard is found')
