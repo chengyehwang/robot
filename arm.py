@@ -67,9 +67,9 @@ def stop():
 def mon():
     Arm.Arm_serial_servo_write(1, 90, 500)
     time.sleep(0.5)
-    Arm.Arm_serial_servo_write(2, 0, 500)
+    Arm.Arm_serial_servo_write(2, 90, 500)
     time.sleep(0.5)
-    Arm.Arm_serial_servo_write(3, 90, 500)
+    Arm.Arm_serial_servo_write(3, 0, 500)
     time.sleep(0.5)
     Arm.Arm_serial_servo_write(4, 0, 500)
     time.sleep(0.5)
@@ -85,4 +85,5 @@ if __name__ == '__main__':
         mon()
     if True:
         mon()
+    if False:
         video('test.avi')
