@@ -19,6 +19,7 @@ def calib_do():
     screen('calib/1.jpg')
 
 def calib_post():
+    print('height', height, 'width', width)
     # termination criteria
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
@@ -43,7 +44,7 @@ def calib_post():
             corners2 = cv.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
             imgpoints.append(corners)
             # Draw and display the corners
-            cv.drawChessboardCorners(img, (7,6), corners2, ret)
+            cv.drawChessboardCorners(img, (height-1,width-1), corners2, ret)
             cv.imshow('img', img)
             cv.waitKey(500)
     cv.waitKey(5000)
@@ -62,6 +63,6 @@ def comp():
 if __name__ == "__main__":
     width = 9
     height = 15
-    calib_do()
+    #calib_do()
     calib_post()
 
