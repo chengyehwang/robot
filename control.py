@@ -7,7 +7,6 @@ from plot import plot
 from subprocess import PIPE, Popen
 
 import arm
-from gcode import *
 
 device_dut = None
 device_mon = None
@@ -77,7 +76,7 @@ def list_package(name):
 
 def launch_package():
     package = list_package('baidu')
-    adb_dut('monkey -p %s -v 500'%package)
+    adb_dut('am start -n %s/.MainActivity'%package)
 
 
 def fps_begin():
@@ -123,14 +122,4 @@ if __name__ == '__main__':
         adb_dut('chmod 755 /data/local/tmp/scroll.sh')
         adb_dut('dos2unix /data/local/tmp/scroll.sh')
         adb_dut('nohup /data/local/tmp/scroll.sh >/dev/null 2>/dev/null &')
-    if True:
-        gcode_begin()
-        gcode_kernel("$x\n$h\nG92 X0Y0Z0\nG90\n".split('\n'))
-        launch_package()
-        fps_begin()
-        for i in range(20):
-            gcode_kernel("G01 X230Y-120F10000\nG01 Z-20F1000\nG01 X230Y-30F12000\nG01 Z0F4000\n".split('\n'))
-
-        fps_end()
-        fps_plot()
 
