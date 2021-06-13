@@ -52,14 +52,27 @@ def calib_post():
     with open('calib.json', 'w') as fp:
         fp.write(json.dumps({'mtx':mtx.tolist(),'dist':dist.tolist()},indent=4))
 
-def comp():
+def comp(img=[]):
+    with open('calib.json') as fp:
+        calib = json.load(fp)
+    mtx = np.matrix(calib['mtx'])
+    dist = np.matrix(calib['dist'])
+    print('mtx', mtx, 'dist', dist)
     # undistort
-    dst = cv.undistort(img, mtx, dist, None, newcameramtx)
+    dst = cv.undistort(img, mtx, dist, None, None)
     # crop the image
-    cv.imwrite('calibresult.png', dst)
+    return dst
 
 
 if __name__ == "__main__":
     #calib_do()
-    calib_post()
+    #calib_post()
+    data = screen('')
+    print(data)
+    data_new = comp(data)
+    cv.imshow('orig', data)
+    cv.imshow('new', data_new)
+    cv.waitKey()
+    cv.destroyAllWindows()
+
 
