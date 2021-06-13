@@ -9,6 +9,8 @@ def bgr8_to_jpeg(value, quality=75):
 def screen(file_name):
     image = cv2.VideoCapture(0)
     ret, frame = image.read()
+    if file_name == '':
+        return frame
     value = bgr8_to_jpeg(frame)
     with open(file_name, 'wb') as fp:
         fp.write(value)
