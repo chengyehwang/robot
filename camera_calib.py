@@ -11,10 +11,11 @@ width = 7
 height = 5
 
 def calib_do():
-    os.system('./gen_pattern.py -c %d -r %d -T checkerboard -o checkerboard.jpg'%(width, height))
-    adb_dut('rm /storage/emulated/0/Download/checkerboard.jpg')
-    adb_cmd('push checkerboard.jpg /storage/emulated/0/Download/')
-    adb_dut('am start -a android.intent.action.VIEW -d file:///storage/emulated/0/Download/checkerboard.jpg -t image/jpeg')
+    image_file = 'board_%d_%d.jpg'%(width, height)
+    os.system('./gen_pattern.py -c %d -r %d -T checkerboard -o %s'%(width, height, image_file))
+    adb_dut('rm /storage/emulated/0/DCIM/Screenshots/%s'%image_file)
+    adb_cmd('push %s /storage/emulated/0/DCIM/Screenshots/'%image_file)
+    adb_dut('am start -a android.intent.action.VIEW -d file:///storage/emulated/0/DCIM/Screenshots/%s -t image/jpeg'%image_file)
     screen('calib/1.jpg')
 
 def calib_post():
@@ -59,6 +60,8 @@ def comp():
 
 
 if __name__ == "__main__":
+    width = 9
+    height = 15
     calib_do()
     calib_post()
 

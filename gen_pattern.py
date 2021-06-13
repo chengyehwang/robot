@@ -29,7 +29,8 @@ class SVG:
     def __init__(self, cmd, **argv):
         height = int(SVG_height)
         width = int(SVG_width)
-        self.img = np.ones((height,width,3), np.uint8) * 255
+        print('width', width, 'height', height)
+        self.img = 255 - np.zeros((height,width,3), np.uint8)
         if cmd == "rect":
             x = int(argv.get('x'))
             y = int(argv.get('y'))
@@ -41,6 +42,9 @@ class SVG:
         self.img = 255-cv2.add(255-self.img, 255-layer.img)
 
     def save(self, filename):
+        cv2.imshow('img', self.img)
+        cv2.rectangle(self.img, (0,0), (int(SVG_width-1), int(SVG_height-1)), (0,0,0), 1)
+        cv2.waitKey()
         cv2.imwrite(filename, self.img)
 
 class PatternMaker:
@@ -131,16 +135,9 @@ def main():
     units = args.units
     square_size = args.square_size
     radius_rate = args.radius_rate
-    if 'page_width' and 'page_height' in args:
-        page_width = args.page_width
-        page_height = args.page_height
-    else:
-        page_size = args.page_size
-        # page size dict (ISO standard, mm) for easy lookup. format - size: [width, height]
-        page_sizes = {"A0": [840, 1188], "A1": [594, 840], "A2": [420, 594], "A3": [297, 420], "A4": [210, 297],
-                      "A5": [148, 210]}
-        page_width = page_sizes[page_size][0]
-        page_height = page_sizes[page_size][1]
+    if True:
+        page_width = (columns + 2) * square_size
+        page_height = (rows + 2) * square_size
     global SVG_width
     global SVG_height
     SVG_width = page_width
