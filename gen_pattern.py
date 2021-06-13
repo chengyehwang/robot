@@ -29,16 +29,16 @@ class SVG:
     def __init__(self, cmd, **argv):
         height = int(SVG_height)
         width = int(SVG_width)
-        self.img = np.zeros((height,width,3), np.uint8)
+        self.img = np.ones((height,width,3), np.uint8) * 255
         if cmd == "rect":
             x = int(argv.get('x'))
             y = int(argv.get('y'))
             width = int(argv.get('width'))
             height = int(argv.get('height'))
             print(x,y,width, height)
-            cv2.rectangle(self.img, (x, y), (x+width, y+height), (255,255,255), -1)
+            cv2.rectangle(self.img, (x, y), (x+width, y+height), (0,0,0), -1)
     def append(self, layer):
-        self.img = cv2.add(self.img, layer.img)
+        self.img = 255-cv2.add(255-self.img, 255-layer.img)
 
     def save(self, filename):
         cv2.imwrite(filename, self.img)

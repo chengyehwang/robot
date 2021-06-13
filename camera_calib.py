@@ -4,12 +4,14 @@ import cv2 as cv
 import glob
 
 from control import *
+from arm import *
 import os
 
 def calib_do():
-    os.system('./gen_pattern.py -T checkerboard -o checkerboard.jpg')
-    adb_cmd('push checkerboard.jpg /data/local/tmp')
-    adb_dut('am start -a android.intent.action.VIEW -d /data/local/tmp/checkerboard.jpg -t image/jpeg')
+    os.system('./gen_pattern.py -c 7 -r 6 -T checkerboard -o checkerboard.jpg')
+    adb_cmd('push checkerboard.jpg /storage/emulated/0/Download/')
+    adb_dut('am start -a android.intent.action.VIEW -d file:///storage/emulated/0/Download/checkerboard.jpg -t image/jpeg')
+    screen('calib/1.jpg')
 
 def calib_post():
     # termination criteria
@@ -24,10 +26,12 @@ def calib_post():
     for fname in images:
         img = cv.imread(fname)
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        cv.imshow('gray', gray)
         # Find the chess board corners
         ret, corners = cv.findChessboardCorners(gray, (7,6), None)
         # If found, add object points, image points (after refining them)
         if ret == True:
+            print('chessboard is found')
             objpoints.append(objp)
             corners2 = cv.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
             imgpoints.append(corners)
@@ -35,6 +39,7 @@ def calib_post():
             cv.drawChessboardCorners(img, (7,6), corners2, ret)
             cv.imshow('img', img)
             cv.waitKey(500)
+    cv.waitKey(5000)
     cv.destroyAllWindows()
 
 
@@ -49,3 +54,5 @@ def comp():
 
 if __name__ == "__main__":
     calib_do()
+    calib_post()
+
