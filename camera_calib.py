@@ -8,7 +8,8 @@ from arm import *
 import os
 
 def calib_do():
-    os.system('./gen_pattern.py -c 7 -r 6 -T checkerboard -o checkerboard.jpg')
+    os.system('./gen_pattern.py -c 7 -r 5 -T checkerboard -o checkerboard.jpg')
+    adb_dut('rm /storage/emulated/0/Download/checkerboard.jpg')
     adb_cmd('push checkerboard.jpg /storage/emulated/0/Download/')
     adb_dut('am start -a android.intent.action.VIEW -d file:///storage/emulated/0/Download/checkerboard.jpg -t image/jpeg')
     screen('calib/1.jpg')
@@ -26,9 +27,11 @@ def calib_post():
     for fname in images:
         img = cv.imread(fname)
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        (thresh, gg) = cv2.threshold(gray, 127, 255, cv.THRESH_BINARY)
         cv.imshow('gray', gray)
+        cv.imshow('gg', gg)
         # Find the chess board corners
-        ret, corners = cv.findChessboardCorners(gray, (7,6), None)
+        ret, corners = cv.findChessboardCorners(gray, (4,6), None )
         # If found, add object points, image points (after refining them)
         if ret == True:
             print('chessboard is found')
