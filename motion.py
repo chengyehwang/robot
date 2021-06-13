@@ -42,9 +42,12 @@ while True:
         cv2.putText(roi, str(id), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
         cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
 
-    cv2.imshow("roi", roi)
-    cv2.imshow("Frame", frame)
-    cv2.imshow("Mask", mask)
+    cv2.imshow("roi", cv2.pyrDown(roi))
+    cv2.moveWindow("roi", 0, 0)
+    cv2.imshow("Frame", cv2.pyrDown(frame))
+    cv2.moveWindow("Frame", 0, int(height/2)+20)
+    cv2.imshow("Mask", cv2.pyrDown(mask))
+    cv2.moveWindow("Mask", int(width/2), 0)
 
     key = cv2.waitKey(30)
     if key == 27:
