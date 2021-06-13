@@ -15,8 +15,10 @@ def screen(file_name):
 
 def video(file_name):
     cap = cv2.VideoCapture(0)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    print('fps:',fps)
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    out = cv2.VideoWriter(file_name, fourcc, 20.0, (640, 480))
+    out = cv2.VideoWriter(file_name, fourcc, fps, (640, 480))
     start = time.time()
     while(cap.isOpened()):
         ret, frame = cap.read()
@@ -25,7 +27,7 @@ def video(file_name):
             out.write(frame)
         else:
             break
-        if ( now - start ) > 5.0:
+        if ( now - start ) > 10.0:
             break
     cap.release()
     out.release()
