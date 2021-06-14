@@ -30,7 +30,38 @@ def track():
         #mask = object_detector.apply(roi)
         #_, mask = cv2.threshold(mask, 254, 255, cv2.THRESH_BINARY)
         gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-        contours, _ = cv2.findContours(gray, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        blurred = cv.GaussianBlur(gray, (11, 11), 0)
+        can = cv.Canny(blurred, 50, 200, None, 3)
+        
+        print(can.shape)
+        matrix = np.array(can)
+        print(len(matrix))
+        value = np.sum(matrix, axis=0)
+        def moving_average(x, w):
+            return np.convolve(x, np.ones(w), 'valid') / w
+        value = moving_average(value, 30)
+        value = np.clip (value / 3000 * 255, 0, 255)
+        print(np.histogram(value))
+        print(len(value))
+
+        #can[0,9:] = value
+        #can[1,9:] = value
+        #can[2,9:] = value
+
+        v_prev = value[0]
+        active = 0
+        thread = 70
+        for x in range(len(value)):
+            v = value[x]
+            if v_prev > thread and v < thread:
+                if x - active > 100:
+                    pt1 = (x, 0)
+                    pt2 = (x, int(width))
+                    cv.line(roi, pt1, pt2, (0,0,255), 3)
+                    active = x
+            v_prev = v
+
+        contours, _ = cv2.findContours(can, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         detections = []
         for cnt in contours:
             # Calculate area and remove small elements
@@ -41,28 +72,12 @@ def track():
             if True:
                 detections.append([x, y, w, h])
 
-        can = cv.Canny(gray, 50, 200, None, 3)
-        lines = cv.HoughLines(can, 1, np.pi / 180, 150, None, 0, 0)
-        for line in lines:
-            rho = line[0][0]
-            theta = line[0][1]
-            a = math.cos(theta)
-            b = math.sin(theta)
-            x0 = a * rho
-            y0 = b * rho
-            pt1 = (int(x0 + 1000*(-b)), int(y0 + 1000*(a)))
-            pt2 = (int(x0 - 1000*(-b)), int(y0 - 1000*(a)))
-            if abs(b) > 0.1:
-                continue
-            cv.line(roi, pt1, pt2, (0,0,255), 3)
-
         # 2. Object Tracking
         boxes_ids = tracker.update(detections)
         for box_id in boxes_ids:
             x, y, w, h, id = box_id
             cv2.putText(roi, str(id), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
             cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
-
         now = time.time()
         delta = now - now_prev
         now_prev = now
