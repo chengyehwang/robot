@@ -7,6 +7,7 @@ def bgr8_to_jpeg(value, quality=75):
     return bytes(cv2.imencode('.jpg', value)[1])
 
 def screen(file_name):
+    print('screen dump to %s'%file_name)
     image = cv2.VideoCapture(0)
     ret, frame = image.read()
     if file_name == '':

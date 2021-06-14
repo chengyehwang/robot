@@ -9,15 +9,17 @@ from arm import *
 import os
 
 width = 9
-height = 15
+height = 17
 
 def calib_do():
     image_file = 'board_%d_%d.jpg'%(width, height)
     os.system('./gen_pattern.py -c %d -r %d -T checkerboard -o %s'%(width, height, image_file))
-    adb_dut('rm /storage/emulated/0/DCIM/Screenshots/%s'%image_file)
+    adb_dut('rm /storage/emulated/0/DCIM/Screenshots/board_*_*.jpg')
     adb_cmd('push %s /storage/emulated/0/DCIM/Screenshots/'%image_file)
     adb_dut('am start -a android.intent.action.VIEW -d file:///storage/emulated/0/DCIM/Screenshots/%s -t image/jpeg'%image_file)
-    screen('calib/1.jpg')
+    time.sleep(0.5)
+    adb_dut('input tap 500 500')
+    screen('calib.jpg')
 
 def calib_post():
     print('height', height, 'width', width)
@@ -40,51 +42,46 @@ def calib_post():
         if ret == True:
             print('chessboard is found')
             objpoints.append(objp)
-            corners2 = cv.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
+            cross = cv.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
             imgpoints.append(corners)
             # Draw and display the corners
-            cv.drawChessboardCorners(img, (height-1,width-1), corners2, ret)
+            cv.drawChessboardCorners(img, (height-1,width-1), cross, ret)
             cv.imshow('img', img)
+            
     cv.waitKey()
     cv.destroyAllWindows()
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
     print(mtx,dist)
 
-    with open('calib.json', 'w') as fp:
-        fp.write(json.dumps({'mtx':mtx.tolist(),'dist':dist.tolist()},indent=4))
+    pos0 = cross[0][0]
+    pos1 = cross[height-1-1][0]
+    pos2 = cross[(height-1)*(width-1)-1][0]
+    src_rot = np.matrix([pos0, pos1, pos2]).astype(np.float32)
+    dst_rot = np.matrix([[pos0[0],pos1[1]], pos1, [pos1[0], pos2[1]]]).astype(np.float32)
+    matrix_rot = cv.getAffineTransform(src_rot, dst_rot)
+    print(src_rot, dst_rot, matrix_rot)
 
-def calib_rotate():
-    img = cv.imread('calib.jpg', cv.IMREAD_GRAYSCALE)
-    img_show = cv.imread('calib.jpg')
-    img_dist = comp(img)
-    contours, _ = cv.findContours(img_dist, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-    print(contours)
-    for cnt in contours:
-        area = cv2.contourArea(cnt)
-        if area < 10:
-            continue
-        perimeter = cv2.arcLength(cnt,True)
-        epsilon = 0.01*cv2.arcLength(cnt,True)
-        approx = cv2.approxPolyDP(cnt,epsilon,True)
-        cv2.drawContours(img_show, approx, -1, (0, 0, 255), 3)
-    print(approx)
-    cv.imshow('img_show', img_show)
-    cv.waitKey()
+    with open('calib.json', 'w') as fp:
+        fp.write(json.dumps({'mtx':mtx.tolist(),'dist':dist.tolist(),'rot': matrix_rot.tolist()},indent=4))
 
 def comp(img=[]):
     with open('calib.json') as fp:
         calib = json.load(fp)
     mtx = np.matrix(calib['mtx'])
     dist = np.matrix(calib['dist'])
-    #print('mtx', mtx, 'dist', dist)
+    rot = np.matrix(calib['rot'])
+    #print('mtx', mtx, 'dist', dist, 'rot', rot)
     # undistort
     dst = cv.undistort(img, mtx, dist, None, None)
+    # rotate
+
+    dst_wrap = cv.warpAffine(dst, rot, (dst.shape[1], dst.shape[0]))
     # crop the image
-    return dst
+    return dst_wrap
 
 
 if __name__ == "__main__":
-    if False:
+    if True:
         #calib_do()
         #calib_post()
         data = screen('')
@@ -94,5 +91,3 @@ if __name__ == "__main__":
         cv.imshow('new', data_new)
         cv.waitKey()
         cv.destroyAllWindows()
-    if True:
-        calib_rotate()

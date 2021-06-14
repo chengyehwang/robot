@@ -78,6 +78,10 @@ def launch_package():
     package = list_package('baidu')
     adb_dut('am start -n %s/.MainActivity'%package)
 
+def kill_app():
+    adb_dut('input keyevent KEYCODE_HOME')
+    adb_dut('input keyevent KEYCODE_MENU')
+    adb_dut('input keyevent KEYCODE_APP_SWITCH')
 
 def fps_begin():
     package = list_package('baidu')
@@ -122,4 +126,5 @@ if __name__ == '__main__':
         adb_dut('chmod 755 /data/local/tmp/scroll.sh')
         adb_dut('dos2unix /data/local/tmp/scroll.sh')
         adb_dut('nohup /data/local/tmp/scroll.sh >/dev/null 2>/dev/null &')
-
+    if True:
+        kill_app()

@@ -6,11 +6,14 @@ from arm import *
 from multiprocessing import Process
 from motion import *
 import os
-if False:
-    if False:
+if True:
+    if True:
+        gcode_begin()
+        gcode_kernel("$x\n$h\nG92 X0Y0Z0\nG90\n".split('\n'))
+        gcode_end()
         calib_do()
         calib_post()
-    if True:
+    if False:
         gcode_begin()
         gcode_kernel("$x\n$h\nG92 X0Y0Z0\nG90\n".split('\n'))
         fps_begin()
@@ -25,6 +28,6 @@ if False:
         fps_end()
         fps_plot()
 
-if True:
+if False:
     track()
 
