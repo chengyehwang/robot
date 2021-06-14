@@ -35,7 +35,7 @@ def track():
             # Calculate area and remove small elements
             area = cv2.contourArea(cnt)
             x, y, w, h = cv2.boundingRect(cnt)
-            if y > 50:
+            if y > 100:
                 continue
             if area < 500:
                 continue
