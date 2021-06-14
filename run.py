@@ -14,7 +14,7 @@ if True:
         gcode_kernel("$x\n$h\nG92 X0Y0Z0\nG90\n".split('\n'))
         fps_begin()
         launch_package()
-        p = Process(video, args = ('test.avi')
+        p = Process(target = video, args = ('test.avi',))
         p.start()
         for i in range(20):
             pass
