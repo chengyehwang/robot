@@ -4,8 +4,9 @@ from control import *
 from gcode import *
 from arm import *
 from multiprocessing import Process
+from motion import *
 import os
-if True:
+if False:
     if False:
         calib_do()
         calib_post()
@@ -23,4 +24,7 @@ if True:
         p.join()
         fps_end()
         fps_plot()
+
+if True:
+    track()
 

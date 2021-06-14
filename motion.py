@@ -2,7 +2,7 @@
 import cv2
 from tracker import *
 import time
-
+from camera_calib import *
 def track():
     # Create tracker object
     tracker = EuclideanDistTracker()
@@ -24,7 +24,7 @@ def track():
             break
 
         # Extract Region of interest
-        roi = frame.copy()
+        roi = comp(frame)
 
         # 1. Object Detection
         mask = object_detector.apply(roi)

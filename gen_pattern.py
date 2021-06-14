@@ -42,8 +42,8 @@ class SVG:
         self.img = 255-cv2.add(255-self.img, 255-layer.img)
 
     def save(self, filename):
+        cv2.rectangle(self.img, (10,10), (int(SVG_width-10), int(SVG_height-10)), (0,0,0), 2)
         cv2.imshow('img', self.img)
-        cv2.rectangle(self.img, (0,0), (int(SVG_width-1), int(SVG_height-1)), (0,0,0), 1)
         cv2.waitKey()
         cv2.imwrite(filename, self.img)
 
@@ -136,8 +136,8 @@ def main():
     square_size = args.square_size
     radius_rate = args.radius_rate
     if True:
-        page_width = (columns + 2) * square_size
-        page_height = (rows + 2) * square_size
+        page_width = (columns + 4) * square_size
+        page_height = (rows + 4) * square_size
     global SVG_width
     global SVG_height
     SVG_width = page_width

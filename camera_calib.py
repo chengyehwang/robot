@@ -29,8 +29,8 @@ def calib_post():
     # Arrays to store object points and image points from all the images.
     objpoints = [] # 3d point in real world space
     imgpoints = [] # 2d points in image plane.
-    images = glob.glob('calib/*.jpg')
-    for fname in images:
+    if True:
+        fname = 'calib.jpg'
         img = cv.imread(fname)
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
         cv.imshow('gray', gray)
@@ -49,8 +49,27 @@ def calib_post():
     cv.destroyAllWindows()
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1],None,None)
     print(mtx,dist)
+
     with open('calib.json', 'w') as fp:
         fp.write(json.dumps({'mtx':mtx.tolist(),'dist':dist.tolist()},indent=4))
+
+def calib_rotate():
+    img = cv.imread('calib.jpg', cv.IMREAD_GRAYSCALE)
+    img_show = cv.imread('calib.jpg')
+    img_dist = comp(img)
+    contours, _ = cv.findContours(img_dist, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    print(contours)
+    for cnt in contours:
+        area = cv2.contourArea(cnt)
+        if area < 10:
+            continue
+        perimeter = cv2.arcLength(cnt,True)
+        epsilon = 0.01*cv2.arcLength(cnt,True)
+        approx = cv2.approxPolyDP(cnt,epsilon,True)
+        cv2.drawContours(img_show, approx, -1, (0, 0, 255), 3)
+    print(approx)
+    cv.imshow('img_show', img_show)
+    cv.waitKey()
 
 def comp(img=[]):
     with open('calib.json') as fp:
@@ -65,14 +84,15 @@ def comp(img=[]):
 
 
 if __name__ == "__main__":
-    #calib_do()
-    #calib_post()
-    data = screen('')
-    print(data)
-    data_new = comp(data)
-    cv.imshow('orig', data)
-    cv.imshow('new', data_new)
-    cv.waitKey()
-    cv.destroyAllWindows()
-
-
+    if False:
+        #calib_do()
+        #calib_post()
+        data = screen('')
+        print(data)
+        data_new = comp(data)
+        cv.imshow('orig', data)
+        cv.imshow('new', data_new)
+        cv.waitKey()
+        cv.destroyAllWindows()
+    if True:
+        calib_rotate()
