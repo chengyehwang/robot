@@ -81,8 +81,8 @@ def track():
         now = time.time()
         delta = now - now_prev
         now_prev = now
-        if delta < 0.5:
-            time.sleep(0.5 - delta)
+        if delta < 2:
+            time.sleep(2 - delta)
 
         cv2.imshow("Frame", cv2.pyrDown(frame))
         cv2.moveWindow("Frame", 0, 0)

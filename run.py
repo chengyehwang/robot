@@ -21,7 +21,7 @@ if False:
     p.start()
     for i in range(20):
         pass
-        gcode_kernel("G01 X230Y-120F10000\nG01 Z-20F1000\nG01 X230Y-30F12000\nG01 Z0F4000\n".split('\n'))
+        gcode_kernel("G01 X230Y-120F10000\nG01 Z-20F1000\nG01 X230Y-30F5000\nG01 Z0F4000\n".split('\n'))
 
     p.join()
     fps_end()
