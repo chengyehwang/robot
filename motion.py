@@ -3,11 +3,18 @@ import cv2
 from tracker import *
 import time
 from camera_calib import *
-def track():
+def track(gui=False):
     # Create tracker object
     tracker = EuclideanDistTracker()
 
     cap = cv2.VideoCapture("test.avi")
+    fourcc = cv2.VideoWriter_fourcc(*'XVID')
+    fps = 10
+    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+    out = cv2.VideoWriter("motion.avi", fourcc, fps, (int(width), int(height)))
+
 
     # Object detection from Stable camera
     object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=40)
@@ -82,24 +89,28 @@ def track():
             x, y, w, h, id = box_id
             cv2.putText(roi, str(id), (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
             cv2.rectangle(roi, (x, y), (x + w, y + h), (0, 255, 0), 3)
-        now = time.time()
-        delta = now - now_prev
-        now_prev = now
-        if delta < 2:
-            time.sleep(2 - delta)
 
-        cv2.imshow("Frame", cv2.pyrDown(frame))
-        cv2.moveWindow("Frame", 0, 0)
-        cv2.imshow("gray", cv2.pyrDown(gray))
-        cv2.moveWindow("gray", int(width/2), 0)
-        cv2.imshow("roi", cv2.pyrDown(roi))
-        cv2.moveWindow("roi", 0, int(height/2)+20)
-        cv2.imshow("can", cv2.pyrDown(can))
-        cv2.moveWindow("can", int(width/2), int(height/2)+20)
+        if gui:
+            now = time.time()
+            delta = now - now_prev
+            now_prev = now
+            if delta < 0.1:
+                time.sleep(0.1 - delta)
 
-        key = cv2.waitKey(30)
-        if key == 27:
-            break
+            cv2.imshow("Frame", cv2.pyrDown(frame))
+            cv2.moveWindow("Frame", 0, 0)
+            cv2.imshow("gray", cv2.pyrDown(gray))
+            cv2.moveWindow("gray", int(width/2), 0)
+            cv2.imshow("roi", cv2.pyrDown(roi))
+            cv2.moveWindow("roi", 0, int(height/2)+20)
+            cv2.imshow("can", cv2.pyrDown(can))
+            cv2.moveWindow("can", int(width/2), int(height/2)+20)
+
+            key = cv2.waitKey(30)
+            if key == 27:
+                break
+
+        out.write(roi)
 
     cap.release()
     cv2.destroyAllWindows()
