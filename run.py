@@ -6,13 +6,19 @@ from arm import *
 from multiprocessing import Process
 from motion import *
 import os
-if False:
+parser = argparse.ArgumentParser(description='run steps')
+parser.add_argument('--calib',action='store_true')
+parser.add_argument('--exe',action='store_true')
+parser.add_argument('--post',action='store_true')
+args = parser.parse_args()
+
+if args.calib:
     gcode_begin()
     gcode_kernel("$x\n$h\nG92 X0Y0Z0\nG90\n".split('\n'))
     gcode_end()
     calib_do()
     calib_post()
-if True:
+if args.exe:
     gcode_begin()
     gcode_kernel("$x\n$h\nG92 X0Y0Z0\nG90\n".split('\n'))
     gcode_kernel(["G01 Z-15F4000"])
@@ -28,6 +34,6 @@ if True:
     fps_end()
     fps_plot()
 
-if False:
+if args.post:
     track()
 

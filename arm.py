@@ -18,8 +18,8 @@ def screen(file_name):
         fp.write(value)
     image.release()
 
-def video(file_name):
-    os.system('v4l2-ctl --set-parm=60 --set-fmt-video=width=640,height=480,pixelformat=MJPG --stream-mmap --stream-count=240 --stream-to=test.raw')
+def video(file_name, time=5):
+    os.system('v4l2-ctl --set-parm=60 --set-fmt-video=width=640,height=480,pixelformat=MJPG --stream-mmap --stream-count=%d --stream-to=test.raw'%(time*90))
     fps = 90
     cap = cv2.VideoCapture('test.raw')
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
