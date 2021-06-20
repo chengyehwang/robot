@@ -6,7 +6,7 @@ from arm import *
 from multiprocessing import Process
 from motion import *
 import os
-if False:
+if True:
     gcode_begin()
     gcode_kernel("$x\n$h\nG92 X0Y0Z0\nG90\n".split('\n'))
     gcode_end()

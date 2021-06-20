@@ -16,7 +16,7 @@ def screen(file_name):
     value = bgr8_to_jpeg(frame)
     with open(file_name, 'wb') as fp:
         fp.write(value)
-
+    image.release()
 
 def video(file_name):
     os.system('v4l2-ctl --set-parm=60 --set-fmt-video=width=640,height=480,pixelformat=MJPG --stream-mmap --stream-count=240 --stream-to=test.raw')
@@ -37,6 +37,15 @@ def video(file_name):
     cap.release()
     out.release()
 
+def video_mirror():
+    cap = cv2.VideoCapture(0)
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        cv2.imshow('img', frame)
+        result = cv2.waitKey(100)
+        if result > 0:
+            break
+    cap.release()
 
 def video_cv(file_name):
     cap = cv2.VideoCapture(0+cv2.CAP_V4L2)
@@ -122,5 +131,7 @@ if __name__ == '__main__':
         mon()
     if False:
         mon()
-    if True:
+    if False:
         video('test.avi')
+    if True:
+        video_mirror()

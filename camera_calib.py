@@ -42,12 +42,16 @@ def calib_post():
         ret, corners = cv.findChessboardCorners(gray, (height-1,width-1), None )
         # If found, add object points, image points (after refining them)
         if ret == True:
-            print('chessboard is found')
             objpoints.append(objp)
+
             cross = cv.cornerSubPix(gray,corners, (11,11), (-1,-1), criteria)
+            #print('cross',cross,len(cross))
             imgpoints.append(corners)
             # Draw and display the corners
             cv.drawChessboardCorners(img, (height-1,width-1), cross, ret)
+            if False:
+                for pos in corners:
+                    cv2.circle(img, (int(pos[0][0]),int(pos[0][1])), 5, (0,0,255), -1)
             cv.imshow('img', img)
             
     cv.waitKey()
@@ -83,6 +87,8 @@ def comp(img=[]):
 
 
 if __name__ == "__main__":
+    if False:
+        calib_post()
     if True:
         #calib_do()
         #calib_post()
