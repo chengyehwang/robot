@@ -3,7 +3,8 @@ import cv2
 from tracker import *
 import time
 from camera_calib import *
-def track(gui=False):
+def track(gui=False, **argv):
+    frame_start=argv.get('frame_start',0)
     # Create tracker object
     tracker = EuclideanDistTracker()
 
@@ -110,7 +111,8 @@ def track(gui=False):
             if key == 27:
                 break
 
-        out.write(roi)
+        if frame_id > frame_start:
+            out.write(roi)
 
     cap.release()
     cv2.destroyAllWindows()

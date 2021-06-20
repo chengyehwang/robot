@@ -10,6 +10,7 @@ parser = argparse.ArgumentParser(description='run steps')
 parser.add_argument('--calib',action='store_true')
 parser.add_argument('--exe',action='store_true')
 parser.add_argument('--post',action='store_true')
+parser.add_argument('--start',dest='start', default='0')
 args = parser.parse_args()
 
 if args.calib:
@@ -35,5 +36,5 @@ if args.exe:
     fps_plot()
 
 if args.post:
-    track()
+    track(start=int(args.start))
 
