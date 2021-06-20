@@ -13,7 +13,9 @@ def track():
     object_detector = cv2.createBackgroundSubtractorMOG2(history=100, varThreshold=40)
 
     now_prev = time.time()
+    frame_id = 0
     while True:
+        frame_id += 1
         ret, frame = cap.read()
         width  = cap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
         height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float `height`
@@ -57,9 +59,11 @@ def track():
                 if x - active > 100:
                     pt1 = (x, 0)
                     pt2 = (x, int(width))
-                    cv.line(roi, pt1, pt2, (0,0,255), 3)
+                    cv2.line(roi, pt1, pt2, (0,0,255), 3)
                     active = x
             v_prev = v
+        text = str(frame_id)
+        cv2.putText(roi, text, (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255, 255), 1, cv.LINE_AA)
 
         contours, _ = cv2.findContours(can, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         detections = []
