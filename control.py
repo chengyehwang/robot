@@ -16,9 +16,9 @@ def adb_cmd(cmd, **kwargs):
     mon = kwargs.get('mon',False)
     global device_dut
     global device_mon
-    if dut:
+    if dut and device_dut:
         cmd = 'adb -s ' + device_dut + ' ' + cmd
-    elif mon:
+    elif mon and device_mon:
         cmd = 'adb -s ' + device_mon + ' ' + cmd
     else:
         cmd = 'adb ' + cmd
@@ -121,10 +121,10 @@ if __name__ == '__main__':
     #adb_mon('input keyevent KEYCODE_CAMERA')
     #adb_mon('input swipe 300 1000 300 100')
     #print(adb_mon('am start -a android.media.action.IMAGE_CAPTURE --ei android.intent.extras.CAMERA_FACING 0'))
-    if False:
+    if True:
         adb_cmd('push scroll.sh /data/local/tmp', dut=True)
         adb_dut('chmod 755 /data/local/tmp/scroll.sh')
         adb_dut('dos2unix /data/local/tmp/scroll.sh')
         adb_dut('nohup /data/local/tmp/scroll.sh >/dev/null 2>/dev/null &')
-    if True:
+    if False:
         kill_app()

@@ -12,13 +12,15 @@ width = 9
 height = 17
 
 def calib_do():
+    image_path = '/storage/emulated/0/DCIM/Camera/'
     image_file = 'board_%d_%d.jpg'%(width, height)
     os.system('./gen_pattern.py -c %d -r %d -T checkerboard -o %s'%(width, height, image_file))
-    adb_dut('rm /storage/emulated/0/DCIM/Screenshots/board_*_*.jpg')
-    adb_cmd('push %s /storage/emulated/0/DCIM/Screenshots/'%image_file)
-    adb_dut('am start -a android.intent.action.VIEW -d file:///storage/emulated/0/DCIM/Screenshots/%s -t image/jpeg'%image_file)
-    time.sleep(0.5)
+    adb_dut('rm %s/board_*_*.jpg'%image_path)
+    adb_cmd('push %s %s'%(image_file, image_path))
+    adb_dut('am start -a android.intent.action.VIEW -d file://%s%s -t image/jpeg'%(image_path, image_file))
+    time.sleep(1)
     adb_dut('input tap 500 500')
+    time.sleep(1)
     screen('calib.jpg')
 
 def calib_post():
